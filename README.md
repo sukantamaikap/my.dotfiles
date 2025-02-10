@@ -45,7 +45,6 @@ Works in unison with [my nvim setup](https://github.com/sukantamaikap/my.lazyvim
 
 - [sesh](https://github.com/joshmedeski/sesh)
 
-
 ## 💤 LazyVim
 
 My starter template for [LazyVim](https://github.com/LazyVim/LazyVim). Refer to the [documentation](https://lazyvim.github.io/installation) to get started.
@@ -83,6 +82,12 @@ config:
   MD013: false
 ```
 
+### Ansible changes
+
+```sh
+brew install ansible ansible-lint
+```
+
 ### Reference dotfile repositories
 
 - [1](https://github.com/omerxx/dotfiles)
@@ -109,5 +114,5 @@ Works in unision with tmux setup.
 ## Enable dotfiles
 
 ```sh
-$ cd ~/ && git clone git@github.com:sukantamaikap/my.dotfiles.git && cd my.dotfiles && stow .
+cd ~/ && git clone git@github.com:sukantamaikap/my.dotfiles.git && cd my.dotfiles && stow .
 ```
