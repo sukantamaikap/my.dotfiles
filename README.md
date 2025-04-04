@@ -4,6 +4,15 @@ Setup as code for Mac and Linux
 
 ## zsh
 
+0. Create or update `~/.zshenv` :
+
+```
+# Set essential PATH entries
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+# Now set ZDOTDIR
+export ZDOTDIR="$HOME/.config/zsh"
+```
+
 1. Install [GNU Stow](https://www.gnu.org/software/stow/manual/stow.html):
 
 ```sh
