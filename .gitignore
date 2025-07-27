@@ -1,1 +1,13 @@
-github-copilot/**
+**/github-copilot/**
+.DS_Store
+tt.*
+.tests
+doc/tags
+debug
+.repro
+foo.*
+*.log
+data
+.DS_Store
+lazygit/**
+.config/fish/**

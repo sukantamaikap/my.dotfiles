@@ -5,11 +5,13 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Ensure PATH includes common locations
+# Ensure Neovim environment
+export NVIM_LOG_FILE="$XDG_DATA_HOME/nvim/log/nvim.log"
+
+# Early environment setup
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="/usr/local/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"  # for M1/M2 Macs
-export PATH="$HOME/bin:$PATH"
 
 # Create necessary directories for Zinit
 mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zinit/completions"
@@ -100,5 +102,10 @@ alias n='nvim'
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
-# Loca dev environment variabls
+# Source your dev environment early
 source $HOME/.devenv
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/sukantamaikap/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
