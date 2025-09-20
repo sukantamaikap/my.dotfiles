@@ -1,4 +1,4 @@
-theme = dark:catppuccin-frappe,light:catppuccin-latte
+theme = dark:Django,light:CLRS
 font-size = 16
 copy-on-select = clipboard
 shell-integration = zsh
