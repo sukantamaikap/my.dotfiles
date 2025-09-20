@@ -1,4 +1,4 @@
-theme = dark:Django,light:CLRS
+theme = dark:Spacedust,light:"Rose Pine Dawn"
 font-size = 16
 copy-on-select = clipboard
 shell-integration = zsh
