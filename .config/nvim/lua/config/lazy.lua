@@ -51,3 +51,17 @@ require("lazy").setup({
     },
   },
 })
+
+require("fzf-lua").setup({
+  grep = {
+    rg_opts = table.concat({
+      "--column",
+      "--line-number",
+      "--no-heading",
+      "--color=always",
+      "--smart-case",
+      "--hidden",
+      "--no-ignore-vcs",
+    }, " "),
+  },
+})
