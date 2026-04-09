@@ -4,7 +4,7 @@ Setup as code for Mac and Linux
 
 ## zsh
 
-0. Create or update `~/.zshenv` :
+1. Create or update `~/.zshenv` :
 
 ```
 # Set essential PATH entries
@@ -19,8 +19,8 @@ export ZDOTDIR="$HOME/.config/zsh"
 brew install stow
 ```
 
-2. Install yazi following [this](https://yazi-rs.github.io/docs/installation/).
-3. Install [zoxide](https://github.com/ajeetdsouza/zoxide).
+1. Install yazi following [this](https://yazi-rs.github.io/docs/installation/).
+2. Install [zoxide](https://github.com/ajeetdsouza/zoxide).
 
 Zsh plugins are managed using [zinit](https://github.com/zdharma-continuum/zinit). Any [ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) plugins can be installed using zinit by referring the plugin name in [this](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins) folder in ohmyzsh.
 
@@ -72,6 +72,12 @@ Example:
 ```zsh
 brew install font-hack-nerd-font
 brew install font-blex-mono-nerd-font
+```
+
+### neofetch
+
+```zsh
+brew install neofetch
 ```
 
 ### python changes

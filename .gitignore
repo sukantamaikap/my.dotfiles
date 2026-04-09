@@ -11,3 +11,12 @@ data
 .DS_Store
 lazygit/**
 .config/fish/**
+# Ignore history and sessions
+.zsh_history
+.zsh_sessions/
+
+# Ignore completion caches
+.zcompdump*
+
+# Optional: Ignore DS_Store (macOS specific)
+.DS_Store
