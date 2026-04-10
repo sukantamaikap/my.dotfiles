@@ -114,3 +114,74 @@ compinit
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
 
 neofetch
+
+# excalidraw
+alias excalidraw="docker run --rm -dit --name excalidraw -p 5050:80 excalidraw/excalidraw:latest && sleep 2 && open http://localhost:5050"
+alias excalidraw-stop="docker stop excalidraw"
+
+# 🕵️ SearXNG Management (Mac & Linux Compatible)
+searx-start() {
+    local PORT=8080
+    local NAME="searxng"
+    local URL="http://localhost:$PORT"
+
+    echo "🔍 Checking environment..."
+
+    # 1. Check if Docker daemon is running
+    if ! docker info >/dev/null 2>&1; then
+        echo "🐳 ❌ Error: Docker isn't running!"
+        return 1
+    fi
+
+    # 2. Check for existing containers
+    local EXISTING_ID=$(docker ps -aq -f name=^/${NAME}$)
+    if [ -n "$EXISTING_ID" ]; then
+        if [ "$(docker ps -q -f id=$EXISTING_ID)" ]; then
+            echo "✅ $NAME is already cruising!"
+            # Detect OS for opening the browser
+            [[ "$OSTYPE" == "darwin"* ]] && open "$URL" || xdg-open "$URL" 2>/dev/null
+            return 0
+        else
+            echo "🧟 Cleaning up stopped container..."
+            docker rm "$EXISTING_ID" >/dev/null
+        fi
+    fi
+
+    # 3. Port Conflict Check (Works on both)
+    local PORT_INFO=$(lsof -i :$PORT -sTCP:LISTEN -n -P | awk 'NR==2 {print $1, $2}')
+    if [ -n "$PORT_INFO" ]; then
+        local PROC_NAME=$(echo $PORT_INFO | awk '{print $1}')
+        local PROC_PID=$(echo $PORT_INFO | awk '{print $2}')
+        echo "🚫 🚧 Conflict: Port $PORT is busy!"
+        echo "   └─ Process: $PROC_NAME (PID: $PROC_PID)"
+        return 1
+    fi
+
+    echo "🚀 Launching SearXNG..."
+    docker run --rm -d --name "$NAME" -p "$PORT":8080 searxng/searxng:latest
+
+    echo "📜 Tailing logs for 4s..."
+    (docker logs -f "$NAME" & sleep 4; kill $! 2>/dev/null) 
+
+    echo "🧪 Polling health status..."
+    local count=0
+    while ! curl -s -o /dev/null -w "%{http_code}" "$URL" | grep -q "200"; do
+        if [ $count -gt 15 ]; then
+            echo "⚠️  Timeout: SearXNG is taking too long."
+            return 1
+        fi
+        echo "⏳ Still warming up..."
+        sleep 1
+        ((count++))
+    done
+
+    echo "✨ Engine is healthy!"
+    # Handle Mac vs Linux browser opening
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        open "$URL"
+    elif command -v xdg-open > /dev/null; then
+        xdg-open "$URL" 2>/dev/null
+    else
+        echo "🌍 SearXNG is ready at $URL"
+    fi
+}
