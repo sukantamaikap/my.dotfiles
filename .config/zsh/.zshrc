@@ -1,3 +1,20 @@
+# Show system info on startup
+/opt/homebrew/bin/neofetch
+
+# Early environment setup
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"  # for M1/M2 Macs
+
+# Bootstrap dependencies that may produce console output before instant prompt.
+mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zinit/completions"
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+
+if [ ! -d "$ZINIT_HOME" ]; then
+   mkdir -p "$(dirname "$ZINIT_HOME")"
+   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -7,23 +24,6 @@ fi
 
 # Ensure Neovim environment
 export NVIM_LOG_FILE="$XDG_DATA_HOME/nvim/log/nvim.log"
-
-# Early environment setup
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"  # for M1/M2 Macs
-
-# Create necessary directories for Zinit
-mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zinit/completions"
-
-# Set the directory we want to store zinit and plugins
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-
-# Download Zinit, if it's not there yet
-if [ ! -d "$ZINIT_HOME" ]; then
-   mkdir -p "$(dirname $ZINIT_HOME)"
-   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-fi
 
 # Source/Load zinit
 source "${ZINIT_HOME}/zinit.zsh"
@@ -58,13 +58,13 @@ zinit snippet OMZP::eza
 # zinit snippet OMZP::kubectx
 zinit snippet OMZP::command-not-found
 
-# Load completions
+# Docker Desktop completions must be added before compinit.
+fpath=(/Users/sukantamaikap/.docker/completions $fpath)
+
+# Load completions once.
 autoload -Uz compinit && compinit
 
 zinit cdreplay -q
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Keybindings
 bindkey -e
@@ -103,17 +103,10 @@ eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
 # Source your dev environment early
-source $HOME/.devenv
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/sukantamaikap/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
+source "$HOME/.devenv"
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
-
-neofetch
 
 # excalidraw
 alias excalidraw="docker run --rm -dit --name excalidraw -p 5050:80 excalidraw/excalidraw:latest && sleep 2 && open http://localhost:5050"
@@ -124,6 +117,7 @@ searx-start() {
     local PORT=8080
     local NAME="searxng"
     local URL="http://localhost:$PORT"
+    local CONFIG_DIR="$HOME/.config/searxng"
 
     echo "🔍 Checking environment..."
 
@@ -158,7 +152,14 @@ searx-start() {
     fi
 
     echo "🚀 Launching SearXNG..."
-    docker run --rm -d --name "$NAME" -p "$PORT":8080 searxng/searxng:latest
+    docker run --rm  \
+      -d \
+      --name "$NAME" \
+      -p "$PORT":8080 \
+      -v "$CONFIG_DIR/settings.yml:/etc/searxng/settings.yml:ro" \
+      -v "$CONFIG_DIR/limiter.toml:/etc/searxng/limiter.toml:ro" \
+      -e "SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml" \
+      searxng/searxng:latest
 
     echo "📜 Tailing logs for 4s..."
     (docker logs -f "$NAME" & sleep 4; kill $! 2>/dev/null) 
@@ -185,3 +186,6 @@ searx-start() {
         echo "🌍 SearXNG is ready at $URL"
     fi
 }
+
+export SEARXNG_URL="http://localhost:8080"
+alias ollama-restart='brew services restart ollama'

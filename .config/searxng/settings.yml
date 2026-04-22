@@ -1,0 +1,24 @@
+# SearXNG settings
+use_default_settings: true
+
+server:
+  port: 8080
+  bind_address: "0.0.0.0"
+  secret_key: "409ee9ed6d18162ea53d31146de1bbf2aacb6ad4efa72bfdec203da45efb8247" # Generate with: openssl rand -hex 32
+  limiter: false # Disable for local/home-lab use
+
+search:
+  safe_search: 0
+  formats:
+    - html
+    - json # This is the key for OpenCode!
+
+ui:
+  static_path: ""
+  templates_path: ""
+  theme: simple
+  center_alignment: true
+
+enabled_plugins:
+  - "Hash plugin"
+  - "Self-contained search"

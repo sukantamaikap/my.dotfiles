@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": [
+    "opencode-conductor",
+    "oh-my-openagent",
+    "@openspoon/subtask2",
+    "opencode-dynamic-context-pruning"
+  ],
+  "model": "gemma4:26b",
+  "permission": {
+    "edit": "ask",
+    "bash": "ask",
+    "file": "allow",
+    "webfetch": "allow"
+  }
+}

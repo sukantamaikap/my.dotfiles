@@ -1,0 +1,15 @@
+# Set your default model here
+model: ollama:gemma4:26b
+
+clients:
+  - type: openai-compatible
+    name: ollama
+    api_base: http://127.0.0.1:11434/v1
+    models:
+      - name: gemma4:26b
+        alias: gemma-safe
+      - name: hf.co/Jiunsong/supergemma4-26b-uncensored-gguf-v2:Q4_K_M
+        alias: gemma-raw
+    extra_body:
+      # This tells the model to stop showing its internal tags
+      system_prompt: "Answer directly. Do not include <|thought|>, <|channel|>, or any other internal tags in your response."
