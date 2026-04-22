@@ -6,11 +6,86 @@
     "@openspoon/subtask2",
     "opencode-dynamic-context-pruning"
   ],
-  "model": "gemma4:26b",
-  "permission": {
-    "edit": "ask",
-    "bash": "ask",
-    "file": "allow",
-    "webfetch": "allow"
-  }
+  "mcp": {
+    "paddle-billing": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@paddle/mcp-server"
+      ],
+      "enabled": false,
+      "environment": {
+        "PADDLE_API_KEY": "${PADDLE_API_KEY}",
+        "PADDLE_ENVIRONMENT": "sandbox"
+      }
+    },
+    "paddle-docs": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@paddle/mcp-docs-server"
+      ],
+      "enabled": false
+    },
+    "daisyui-github": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-remote",
+        "https://gitmcp.io/saadeghi/daisyui"
+      ],
+      "enabled": false
+    },
+    "solidjs-skills": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "solidjskills@latest"
+      ],
+      "enabled": false
+    },
+    "go-analyzer": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-golang@latest"
+      ],
+      "enabled": false
+    },
+    "docker": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@alisaitteke/docker-mcp"
+      ],
+      "enabled": false,
+      "note": "Manages containers, images, and docker-compose lifecycle."
+    },
+    "terraform": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "terraform-mcp-server@latest"
+      ],
+      "enabled": false,
+      "note": "Provides Terraform Registry API access and HCL pattern analysis."
+    },
+    "kubernetes": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-server-kubernetes@latest"
+      ],
+      "enabled": false,
+      "note": "Interacts with your local kubeconfig to manage pods, services, and helm charts."
+    }
+  },
 }
