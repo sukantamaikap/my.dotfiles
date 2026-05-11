@@ -5,6 +5,7 @@
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"  # for M1/M2 Macs
+export OPENCODE_CONFIG_DIR="$HOME/.config/opencode"
 
 # Bootstrap dependencies that may produce console output before instant prompt.
 mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zinit/completions"
@@ -189,3 +190,5 @@ searx-start() {
 
 export SEARXNG_URL="http://localhost:8080"
 alias ollama-restart='brew services restart ollama'
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
