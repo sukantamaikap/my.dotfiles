@@ -11,7 +11,7 @@ Setup as code for Mac and Linux.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Core tools
-brew install stow zoxide fzf fastfetch neovim tmux
+brew install stow zoxide fzf fastfetch neovim tmux eza
 brew install joshmedeski/sesh/sesh
 brew install reattach-to-user-namespace
 ```
@@ -20,7 +20,7 @@ brew install reattach-to-user-namespace
 
 ```sh
 sudo apt update
-sudo apt install -y git curl zsh stow fzf
+sudo apt install -y git curl zsh stow fzf eza
 
 # zoxide
 curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
