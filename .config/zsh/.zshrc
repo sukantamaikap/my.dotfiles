@@ -1,13 +1,45 @@
-# Show system info on startup
-/opt/homebrew/bin/neofetch
+# ─── OS Detection ────────────────────────────────────────────────────────────
+case "$(uname -s)" in
+  Darwin) _OS="mac" ;;
+  Linux)  _OS="linux" ;;
+  *)      _OS="unknown" ;;
+esac
 
-# Early environment setup
+# ─── Helper: open URL/file cross-platform ────────────────────────────────────
+_open() {
+  if [[ "$_OS" == "mac" ]]; then
+    open "$@"
+  elif command -v xdg-open > /dev/null; then
+    xdg-open "$@" 2>/dev/null
+  else
+    echo "🌍 Open manually: $*"
+  fi
+}
+
+# ─── Show system info on startup ─────────────────────────────────────────────
+if [[ "$_OS" == "mac" ]]; then
+  [[ -x /opt/homebrew/bin/fastfetch ]] && /opt/homebrew/bin/fastfetch
+else
+  [[ -x /usr/bin/fastfetch ]] && /usr/bin/fastfetch
+fi
+
+# ─── Early environment setup ─────────────────────────────────────────────────
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"  # for M1/M2 Macs
+
+# Homebrew (macOS only)
+if [[ "$_OS" == "mac" ]]; then
+  export PATH="/opt/homebrew/bin:$PATH"
+fi
+
+# Linuxbrew (if installed)
+if [[ "$_OS" == "linux" && -d "/home/linuxbrew/.linuxbrew" ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 export OPENCODE_CONFIG_DIR="$HOME/.config/opencode"
 
-# Bootstrap dependencies that may produce console output before instant prompt.
+# ─── Bootstrap zinit ─────────────────────────────────────────────────────────
 mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zinit/completions"
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
@@ -16,33 +48,32 @@ if [ ! -d "$ZINIT_HOME" ]; then
    git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# ─── Powerlevel10k instant prompt ────────────────────────────────────────────
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Ensure Neovim environment
-export NVIM_LOG_FILE="$XDG_DATA_HOME/nvim/log/nvim.log"
+# ─── Neovim environment ─────────────────────────────────────────────────────
+export NVIM_LOG_FILE="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/log/nvim.log"
 
-# Source/Load zinit
+# ─── Source/Load zinit ───────────────────────────────────────────────────────
 source "${ZINIT_HOME}/zinit.zsh"
 
 # Add in Powerlevel10k
 zinit ice depth=1; zinit light romkatv/powerlevel10k
 
-# Add in zsh plugins
+# ─── Zsh plugins ─────────────────────────────────────────────────────────────
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
 
-# Add in snippets
+# ─── OMZ snippets ────────────────────────────────────────────────────────────
 zinit snippet OMZL::git.zsh
 zinit snippet OMZP::git
 zinit snippet OMZP::sudo
-# zinit snippet OMZP::macos
 zinit snippet OMZP::ssh
 zinit snippet OMZP::python
 zinit snippet OMZP::pip
@@ -53,27 +84,37 @@ zinit snippet OMZP::colored-man-pages
 zinit snippet OMZP::docker
 zinit snippet OMZP::docker-compose
 zinit snippet OMZP::eza
-# zinit snippet OMZP::archlinux
-# zinit snippet OMZP::aws
-# zinit snippet OMZP::kubectl
-# zinit snippet OMZP::kubectx
 zinit snippet OMZP::command-not-found
 
-# Docker Desktop completions must be added before compinit.
-fpath=(/Users/sukantamaikap/.docker/completions $fpath)
+# OS-specific OMZ snippets
+if [[ "$_OS" == "mac" ]]; then
+  # OMZP::macos is intentionally skipped — its music/spotify helpers
+  # produce errors and trigger the P10k instant prompt warning.
+  :
+elif [[ "$_OS" == "linux" ]]; then
+  # Uncomment your distro:
+  # zinit snippet OMZP::archlinux
+  # zinit snippet OMZP::ubuntu
+  :
+fi
 
-# Load completions once.
+# ─── Docker completions ──────────────────────────────────────────────────────
+# Docker Desktop (macOS) or Docker Engine (Linux) completions
+if [[ -d "$HOME/.docker/completions" ]]; then
+  fpath=("$HOME/.docker/completions" $fpath)
+fi
+
+# ─── Load completions ────────────────────────────────────────────────────────
 autoload -Uz compinit && compinit
-
 zinit cdreplay -q
 
-# Keybindings
+# ─── Keybindings ─────────────────────────────────────────────────────────────
 bindkey -e
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^[w' kill-region
 
-# History
+# ─── History ─────────────────────────────────────────────────────────────────
 HISTSIZE=5000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
@@ -86,34 +127,41 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
-# Completion styling
+# ─── Completion styling ──────────────────────────────────────────────────────
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
-# Aliases
-alias ls='ls --color'
+# ─── Aliases ─────────────────────────────────────────────────────────────────
 alias vim='nvim'
 alias c='clear'
 alias n='nvim'
 
-# Shell integrations
+# ls coloring: GNU ls uses --color, BSD ls (stock macOS) uses -G.
+# Since we have eza via OMZ plugin, this is a fallback.
+if ls --color=auto / >/dev/null 2>&1; then
+  alias ls='ls --color=auto'
+else
+  alias ls='ls -G'
+fi
+
+# ─── Shell integrations ─────────────────────────────────────────────────────
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
-# Source your dev environment early
-source "$HOME/.devenv"
+# ─── Source dev environment ──────────────────────────────────────────────────
+[[ -f "$HOME/.devenv" ]] && source "$HOME/.devenv"
 
-# To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
+# ─── Powerlevel10k config ────────────────────────────────────────────────────
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
 
-# excalidraw
-alias excalidraw="docker run --rm -dit --name excalidraw -p 5050:80 excalidraw/excalidraw:latest && sleep 2 && open http://localhost:5050"
+# ─── Excalidraw ──────────────────────────────────────────────────────────────
+alias excalidraw="docker run --rm -dit --name excalidraw -p 5050:80 excalidraw/excalidraw:latest && sleep 2 && _open http://localhost:5050"
 alias excalidraw-stop="docker stop excalidraw"
 
-# 🕵️ SearXNG Management (Mac & Linux Compatible)
+# ─── SearXNG Management ─────────────────────────────────────────────────────
 searx-start() {
     local PORT=8080
     local NAME="searxng"
@@ -133,8 +181,7 @@ searx-start() {
     if [ -n "$EXISTING_ID" ]; then
         if [ "$(docker ps -q -f id=$EXISTING_ID)" ]; then
             echo "✅ $NAME is already cruising!"
-            # Detect OS for opening the browser
-            [[ "$OSTYPE" == "darwin"* ]] && open "$URL" || xdg-open "$URL" 2>/dev/null
+            _open "$URL"
             return 0
         else
             echo "🧟 Cleaning up stopped container..."
@@ -142,13 +189,15 @@ searx-start() {
         fi
     fi
 
-    # 3. Port Conflict Check (Works on both)
-    local PORT_INFO=$(lsof -i :$PORT -sTCP:LISTEN -n -P | awk 'NR==2 {print $1, $2}')
+    # 3. Port Conflict Check
+    if command -v lsof > /dev/null; then
+      local PORT_INFO=$(lsof -i :$PORT -sTCP:LISTEN -n -P | awk 'NR==2 {print $1, $2}')
+    elif command -v ss > /dev/null; then
+      local PORT_INFO=$(ss -tlnp "sport = :$PORT" | awk 'NR==2 {print $NF}')
+    fi
     if [ -n "$PORT_INFO" ]; then
-        local PROC_NAME=$(echo $PORT_INFO | awk '{print $1}')
-        local PROC_PID=$(echo $PORT_INFO | awk '{print $2}')
         echo "🚫 🚧 Conflict: Port $PORT is busy!"
-        echo "   └─ Process: $PROC_NAME (PID: $PROC_PID)"
+        echo "   └─ $PORT_INFO"
         return 1
     fi
 
@@ -163,7 +212,7 @@ searx-start() {
       searxng/searxng:latest
 
     echo "📜 Tailing logs for 4s..."
-    (docker logs -f "$NAME" & sleep 4; kill $! 2>/dev/null) 
+    (docker logs -f "$NAME" & sleep 4; kill $! 2>/dev/null)
 
     echo "🧪 Polling health status..."
     local count=0
@@ -178,17 +227,17 @@ searx-start() {
     done
 
     echo "✨ Engine is healthy!"
-    # Handle Mac vs Linux browser opening
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        open "$URL"
-    elif command -v xdg-open > /dev/null; then
-        xdg-open "$URL" 2>/dev/null
-    else
-        echo "🌍 SearXNG is ready at $URL"
-    fi
+    _open "$URL"
 }
 
 export SEARXNG_URL="http://localhost:8080"
-alias ollama-restart='brew services restart ollama'
 
+# ─── Ollama ──────────────────────────────────────────────────────────────────
+if [[ "$_OS" == "mac" ]]; then
+  alias ollama-restart='brew services restart ollama'
+else
+  alias ollama-restart='systemctl --user restart ollama 2>/dev/null || sudo systemctl restart ollama'
+fi
+
+# ─── Misc tools ──────────────────────────────────────────────────────────────
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
