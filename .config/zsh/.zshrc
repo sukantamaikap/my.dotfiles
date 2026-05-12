@@ -155,7 +155,13 @@ eval "$(zoxide init --cmd cd zsh)"
 [[ -f "$HOME/.devenv" ]] && source "$HOME/.devenv"
 
 # ─── Powerlevel10k config ────────────────────────────────────────────────────
-[[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
+# Suppress the config wizard nag on machines where .p10k.zsh doesn't exist yet.
+# Run `p10k configure` manually to generate it.
+if [[ -f ~/.config/zsh/.p10k.zsh ]]; then
+  source ~/.config/zsh/.p10k.zsh
+else
+  typeset -g POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+fi
 
 # ─── Excalidraw ──────────────────────────────────────────────────────────────
 alias excalidraw="docker run --rm -dit --name excalidraw -p 5050:80 excalidraw/excalidraw:latest && sleep 2 && _open http://localhost:5050"

@@ -1,50 +1,123 @@
 # my.dotfiles
 
-Setup as code for Mac and Linux
+Setup as code for Mac and Linux.
+
+## Prerequisites
+
+### macOS
+
+```sh
+# Install Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Core tools
+brew install stow zoxide fzf fastfetch neovim tmux
+brew install joshmedeski/sesh/sesh
+brew install reattach-to-user-namespace
+```
+
+### Linux (Debian/Ubuntu)
+
+```sh
+sudo apt update
+sudo apt install -y git curl zsh stow fzf
+
+# zoxide
+curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+
+# fastfetch
+sudo apt install -y fastfetch  # Debian 13+ / Ubuntu 23.04+
+# Or from GitHub releases for older distros
+
+# neovim (latest)
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+tar xzf nvim-linux64.tar.gz -C ~/.local
+# Ensure ~/.local/nvim-linux64/bin is in PATH
+
+# tmux
+sudo apt install -y tmux
+```
+
+## Enable dotfiles
+
+```sh
+cd ~/ && git clone git@github.com:sukantamaikap/my.dotfiles.git && cd my.dotfiles && stow .
+```
 
 ## zsh
 
-1. Create or update `~/.zshenv` :
+1. Create or update `~/.zshenv`:
 
-```
-# Set essential PATH entries
+```sh
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
-# Now set ZDOTDIR
 export ZDOTDIR="$HOME/.config/zsh"
 ```
 
-1. Install [GNU Stow](https://www.gnu.org/software/stow/manual/stow.html):
+2. Set zsh as default shell (Linux only — macOS already defaults to zsh):
 
 ```sh
-brew install stow
+chsh -s $(which zsh)
 ```
 
-1. Install yazi following [this](https://yazi-rs.github.io/docs/installation/).
-2. Install [zoxide](https://github.com/ajeetdsouza/zoxide).
+3. Install [yazi](https://yazi-rs.github.io/docs/installation/):
 
-Zsh plugins are managed using [zinit](https://github.com/zdharma-continuum/zinit). Any [ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) plugins can be installed using zinit by referring the plugin name in [this](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins) folder in ohmyzsh.
+| macOS | Linux |
+|-------|-------|
+| `brew install yazi` | See [yazi install docs](https://yazi-rs.github.io/docs/installation/) |
+
+4. Install [zoxide](https://github.com/ajeetdsouza/zoxide) (done in prerequisites above).
+
+Zsh plugins are managed using [zinit](https://github.com/zdharma-continuum/zinit) (auto-bootstrapped on first shell launch). Any [ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) plugins can be installed using zinit by referring to the plugin name in [this](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins) folder.
+
+### First launch
+
+On a fresh machine, the first zsh session will download and compile zinit snippets. This is a one-time operation. After that, run:
+
+```sh
+p10k configure
+```
+
+to generate `~/.config/zsh/.p10k.zsh` for your terminal.
 
 ## tmux
 
-```zsh
+### macOS
+
+```sh
 brew install tmux
 brew install joshmedeski/sesh/sesh
 brew install zoxide
 brew install reattach-to-user-namespace
+```
+
+### Linux
+
+```sh
+sudo apt install -y tmux
+# sesh — install from GitHub releases:
+# https://github.com/joshmedeski/sesh/releases
+# zoxide already installed in prerequisites
+```
+
+### Setup
+
+```sh
 git clone git@github.com:sukantamaikap/my.tmux.git ~/.config/tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
 
 ### Key bindings
 
-`Ctl + a` is the prefix key
-`prefix` `I` to install plugins
-`prefix` `U` to update plugins
-`prefix` `r` to rename the current window
-`prefix` `R` to reload the config file
-`prefix` `T` to open the session manager.
-`prefix` `Alt` + `Arrow` to resize panes
-`prefix` `z` to zoom in/out of a pane
+| Binding | Action |
+|---------|--------|
+| `Ctrl+a` | Prefix key |
+| `prefix` `I` | Install plugins |
+| `prefix` `U` | Update plugins |
+| `prefix` `r` | Rename current window |
+| `prefix` `R` | Reload config |
+| `prefix` `T` | Open session manager |
+| `prefix` `Alt+Arrow` | Resize panes |
+| `prefix` `z` | Zoom in/out of a pane |
 
 ### Notes
 
@@ -56,78 +129,70 @@ Works in unison with [my nvim setup](https://github.com/sukantamaikap/my.lazyvim
 
 ## 💤 LazyVim
 
-My starter template for [LazyVim](https://github.com/LazyVim/LazyVim). Refer to the [documentation](https://lazyvim.github.io/installation) to get started.
+Starter template for [LazyVim](https://github.com/LazyVim/LazyVim). Refer to the [documentation](https://lazyvim.github.io/installation) to get started.
 
-### Font changes
+### Fonts
 
-Install [fonts](https://www.nerdfonts.com/#home), and set the same in ITerm option.
+Install [Nerd Fonts](https://www.nerdfonts.com/):
 
-```zsh
-brew tap homebrew/cask-fonts
-brew install --cask font-<FONT NAME>-nerd-font
+| macOS | Linux |
+|-------|-------|
+| `brew install font-hack-nerd-font` | Download from [nerdfonts.com](https://www.nerdfonts.com/) and place in `~/.local/share/fonts/`, then run `fc-cache -fv` |
+
+Set the font in your terminal emulator (Ghostty on macOS, your preferred terminal on Linux).
+
+### Python support
+
+```sh
+pip install pynvim
 ```
 
-Example:
+### Node support
 
-```zsh
-brew install font-hack-nerd-font
-brew install font-blex-mono-nerd-font
+```sh
+npm install -g neovim
 ```
 
-### neofetch
+### markdownlint
 
-```zsh
-brew install neofetch
-```
-
-### python changes
-
-- Install pynvim: `pip install pynvim`
-
-### npm changes
-
-- install neovim npm package globally: `npm install -g neovim`
-
-### makrdownlint changes
-
-Following [this](https://github.com/LazyVim/LazyVim/discussions/4094) solution, to disable Markdown warning, `$HOME/.markdownlint-cli2.yaml` need to be present with the below content:
+To disable MD013 (line length) warnings, create `$HOME/.markdownlint-cli2.yaml`:
 
 ```yaml
 config:
   MD013: false
 ```
 
-### Ansible changes
+### Ansible
 
-```sh
-brew install ansible ansible-lint
-```
+| macOS | Linux |
+|-------|-------|
+| `brew install ansible ansible-lint` | `sudo apt install -y ansible ansible-lint` or `pip install ansible ansible-lint` |
 
-### Reference dotfile repositories
+### Debugging
 
-- [1](https://github.com/omerxx/dotfiles)
-- [2](https://github.com/typecraft-dev/dotfiles)
+#### Go
 
-### Debugining
+| macOS | Linux |
+|-------|-------|
+| `brew install delve` | `go install github.com/go-delve/delve/cmd/dlv@latest` |
 
-#### golang
+#### Python
 
-```zsh
-brew install delve
-```
-
-#### python
-
-```zsh
-brew install ruff
-```
+| macOS | Linux |
+|-------|-------|
+| `brew install ruff` | `pip install ruff` |
 
 ### Notes
 
-Works in unision with tmux setup.
+Works in unison with tmux setup.
 
-## Enable dotfiles
+## Terminal emulators
 
-```sh
-cd ~/ && git clone git@github.com:sukantamaikap/my.dotfiles.git && cd my.dotfiles && stow .
-```
+| macOS | Linux |
+|-------|-------|
+| [Ghostty](https://ghostty.org/) — config at `.config/ghostty/config` | Default terminal or install Ghostty/Alacritty/Kitty per preference |
+
+## Reference dotfile repositories
+
+- [omerxx/dotfiles](https://github.com/omerxx/dotfiles)
+- [typecraft-dev/dotfiles](https://github.com/typecraft-dev/dotfiles)
