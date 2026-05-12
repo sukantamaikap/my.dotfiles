@@ -61,6 +61,9 @@ export NVIM_LOG_FILE="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/log/nvim.log"
 # ─── Source/Load zinit ───────────────────────────────────────────────────────
 source "${ZINIT_HOME}/zinit.zsh"
 
+# Suppress first-run download progress messages
+typeset -g ZINIT[MUTE_WARNINGS]=1
+
 # Add in Powerlevel10k
 zinit ice depth=1; zinit light romkatv/powerlevel10k
 
