@@ -1,12 +1,26 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "opencode-conductor",
-    "oh-my-openagent",
+    "opencode-conductor-plugin",
     "@openspoon/subtask2",
     "opencode-dynamic-context-pruning"
   ],
   "mcp": {
+    "searxng-researcher": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-shell-command",
+        "--name",
+        "web_search",
+        "--command",
+        "/Users/sukantamaikap/.config/searxng/scripts/search-tool.sh",
+        "--description",
+        "Searches the internet for real-time tech docs, news, and DevOps trends."
+      ],
+      "enabled": true
+    },
     "paddle-billing": {
       "type": "local",
       "command": [
@@ -57,16 +71,6 @@
       ],
       "enabled": false
     },
-    "docker": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@alisaitteke/docker-mcp"
-      ],
-      "enabled": false,
-      "note": "Manages containers, images, and docker-compose lifecycle."
-    },
     "terraform": {
       "type": "local",
       "command": [
@@ -77,15 +81,39 @@
       "enabled": false,
       "note": "Provides Terraform Registry API access and HCL pattern analysis."
     },
-    "kubernetes": {
+    "lgtm-grafana": {
       "type": "local",
       "command": [
         "npx",
         "-y",
-        "mcp-server-kubernetes@latest"
+        "@grafana/mcp-grafana"
       ],
       "enabled": false,
-      "note": "Interacts with your local kubeconfig to manage pods, services, and helm charts."
+      "environment": {
+        "GRAFANA_URL": "http://localhost:3000",
+        "GRAFANA_TOKEN": "${GRAFANA_TOKEN}"
+      }
+    },
+    "otel-docs": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@opentelemetry/mcp-docs-server"
+      ],
+      "enabled": false
+    },
+    "redis-manager": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-redis@latest"
+      ],
+      "enabled": false,
+      "environment": {
+        "REDIS_URL": "redis://localhost:6379"
+      }
     }
   },
 }

@@ -81,43 +81,67 @@ to generate `~/.config/zsh/.p10k.zsh` for your terminal.
 
 ## tmux
 
-### macOS
+### Prerequisites
+
+| Tool | macOS | Linux |
+|------|-------|-------|
+| tmux | `brew install tmux` | `sudo apt install -y tmux` |
+| sesh | `brew install joshmedeski/sesh/sesh` | Install from [GitHub releases](https://github.com/joshmedeski/sesh/releases) |
+| fzf | `brew install fzf` | `sudo apt install -y fzf` |
+| zoxide | `brew install zoxide` | Already installed above |
+| fd | `brew install fd` | `sudo apt install -y fd-find` |
+| reattach-to-user-namespace | `brew install reattach-to-user-namespace` | **macOS only** |
+
+### Linux-specific notes
+
+The tmux config contains a macOS-only `reattach-to-user-namespace` in `default-command`.
+On Linux, comment out or remove that line in `~/.config/tmux/tmux.conf`:
 
 ```sh
-brew install tmux
-brew install joshmedeski/sesh/sesh
-brew install zoxide
-brew install reattach-to-user-namespace
+# set-option -g default-command "reattach-to-user-namespace -l ${SHELL}"
 ```
 
-### Linux
+For clipboard integration (`tmux-yank`), install `xclip` or `xsel`:
 
 ```sh
-sudo apt install -y tmux
-# sesh — install from GitHub releases:
-# https://github.com/joshmedeski/sesh/releases
-# zoxide already installed in prerequisites
+sudo apt install -y xclip
+```
+
+`tmux-thumbs` is written in Rust and must be compiled after TPM installs it:
+
+```sh
+# After first launch and 'prefix + I'
+cd ~/.tmux/plugins/tmux-thumbs && cargo build --release
 ```
 
 ### Setup
 
+The tmux config is already symlinked by `stow .` to `~/.config/tmux/`.  
+You only need to install the plugin manager:
+
 ```sh
-git clone git@github.com:sukantamaikap/my.tmux.git ~/.config/tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
+
+Launch tmux, then press `prefix` `I` to install all plugins.
 
 ### Key bindings
 
 | Binding | Action |
 |---------|--------|
 | `Ctrl+a` | Prefix key |
-| `prefix` `I` | Install plugins |
-| `prefix` `U` | Update plugins |
+| `prefix` `\` | Split window horizontally |
+| `prefix` `-` | Split window vertically |
+| `prefix` `h/j/k/l` | Navigate panes |
 | `prefix` `r` | Rename current window |
 | `prefix` `R` | Reload config |
-| `prefix` `T` | Open session manager |
-| `prefix` `Alt+Arrow` | Resize panes |
-| `prefix` `z` | Zoom in/out of a pane |
+| `prefix` `T` | Open session manager (sesh + fzf) |
+| `prefix` `p` | Open floating terminal (floax) |
+| `prefix` `o` | Open session switcher (sessionx) |
+| `prefix` `x` | Kill pane (no confirmation) |
+| `prefix` `z` | Zoom in/out of pane |
+| `prefix` `I` | Install plugins |
+| `prefix` `U` | Update plugins |
 
 ### Notes
 
@@ -126,6 +150,8 @@ Works in unison with [my nvim setup](https://github.com/sukantamaikap/my.lazyvim
 ### References
 
 - [sesh](https://github.com/joshmedeski/sesh)
+- [tpm](https://github.com/tmux-plugins/tpm)
+- [tmux-thumbs](https://github.com/fcsonline/tmux-thumbs)
 
 ## 💤 LazyVim
 

@@ -20,3 +20,6 @@ lazygit/**
 
 # Optional: Ignore DS_Store (macOS specific)
 .DS_Store
+
+# pi
+auth.json
