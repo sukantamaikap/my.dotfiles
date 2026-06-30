@@ -1,0 +1,81 @@
+{
+  "$schema": "https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
+  "name": "universal",
+  "vars": {
+    "teal": "#5a8a8a",
+    "blue": "#547daf",
+    "green": "#5a8a5a",
+    "red": "#bb5555",
+    "yellow": "#b8860b",
+    "purple": "#8b6b9e",
+    "cyan": "#5aa0a0",
+    "accent": "#5a8a8a",
+    "mediumGray": "#707070",
+    "dimGray": "#888888",
+    "faintGray": "#999999"
+  },
+  "colors": {
+    "accent": "accent",
+    "border": "blue",
+    "borderAccent": "teal",
+    "borderMuted": "faintGray",
+    "success": "green",
+    "error": "red",
+    "warning": "yellow",
+    "muted": "mediumGray",
+    "dim": "dimGray",
+    "text": "",
+    "thinkingText": "mediumGray",
+
+    "selectedBg": "mediumGray",
+    "userMessageBg": "",
+    "userMessageText": "",
+    "customMessageBg": "",
+    "customMessageText": "",
+    "customMessageLabel": "purple",
+    "toolPendingBg": "",
+    "toolSuccessBg": "",
+    "toolErrorBg": "",
+    "toolTitle": "",
+    "toolOutput": "muted",
+
+    "mdHeading": "yellow",
+    "mdLink": "blue",
+    "mdLinkUrl": "dimGray",
+    "mdCode": "teal",
+    "mdCodeBlock": "",
+    "mdCodeBlockBorder": "muted",
+    "mdQuote": "mediumGray",
+    "mdQuoteBorder": "mediumGray",
+    "mdHr": "mediumGray",
+    "mdListBullet": "green",
+
+    "toolDiffAdded": "green",
+    "toolDiffRemoved": "red",
+    "toolDiffContext": "mediumGray",
+
+    "syntaxComment": "#6a9955",
+    "syntaxKeyword": "#4169e1",
+    "syntaxFunction": "#8b6914",
+    "syntaxVariable": "#2060a0",
+    "syntaxString": "#a31515",
+    "syntaxNumber": "#098658",
+    "syntaxType": "#2e8b57",
+    "syntaxOperator": "",
+    "syntaxPunctuation": "mediumGray",
+
+    "thinkingOff": "faintGray",
+    "thinkingMinimal": "mediumGray",
+    "thinkingLow": "blue",
+    "thinkingMedium": "teal",
+    "thinkingHigh": "purple",
+    "thinkingXhigh": "red",
+
+    "bashMode": "green"
+  },
+  "export": {
+    "pageBg": "",
+    "cardBg": "",
+    "infoBg": ""
+  }
+}
